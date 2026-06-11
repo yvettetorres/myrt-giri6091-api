@@ -8,7 +8,7 @@ import { Task } from "../domain/task.entity";
 @Injectable()
 export class CreateTaskUseCase{
     constructor(
-        @Inject('ITaskRepositoryToken')
+        @Inject(ITaskRepositoryToken)
         private readonly taskRepository: ITaskRepository
     ){}
     async execute(title: string, description: string): Promise<Task> {
