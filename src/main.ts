@@ -37,3 +37,8 @@ SwaggerModule.setup('api/docs', app, documet);
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
+
+//! Uso Prisma ORM
+//? npm install -D prisma
+//? npm install @prisma/client
+//? npx prisma init -- datasource-provider postgresql
