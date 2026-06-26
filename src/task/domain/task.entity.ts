@@ -3,7 +3,7 @@
 
 export class Task {
     constructor(
-        public readonly id: string,
+        public readonly id: number,
         public title: string,
         public description: string,
         public status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED',

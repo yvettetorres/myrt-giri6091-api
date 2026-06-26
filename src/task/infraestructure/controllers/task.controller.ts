@@ -5,7 +5,7 @@ import { GetTaskByIdUseCase } from "@/task/aplication/get-task-by-id.use-case";
 import { UpdateTaskUseCase } from "@/task/aplication/update-task.use.case";
 import { ITaskRepositoryToken } from "@/task/domain/task.repository.interface";
 import type { ITaskRepository } from "@/task/domain/task.repository.interface";
-import { Controller, Get, Post, Body, Inject, HttpStatus, Param, Patch, Delete, HttpCode } from "@nestjs/common";
+import { Controller, Get, Post, Body, Inject, HttpStatus, Param, Patch, Delete, HttpCode, ParseIntPipe } from "@nestjs/common";
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CreateTaskDto } from "./dtos/create-task.dto";
 import { UpdateTaskDto } from "./dtos/update-taskdto";
@@ -37,20 +37,22 @@ export class TaskController {
         return this.createTaskUseCase.execute(task.title, task.description);
     }
 
+
     @Get(':id')
     @ApiOperation({ summary: 'Obtener una tarea por ID' })
     @ApiParam({ name: 'id', description: 'ID de la tarea', type: String })
     @ApiResponse({ status: HttpStatus.OK, description: 'Tarea encontrada' })
     @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Tarea no encontrada' })
-    async findOne(id: string) {
+    async findOne(@Param('id', ParseIntPipe) id: number) {
         return this.getTaskByIdUseCase.execute(id);
     }
+
 
     @Patch(':id')
     @ApiOperation({ summary: 'Actualizar una tarea existente' })
     @ApiParam({ name: 'id', description: 'ID de la tarea (UUID)', })
    
-    async update(@Param('id') id: string, @Body() updateTask: UpdateTaskDto) {
+    async update(@Param('id', ParseIntPipe) id: number, @Body() updateTask: UpdateTaskDto) {
       return this.updateTaskUseCase.execute(id, updateTask);
     }
 
@@ -59,16 +61,9 @@ export class TaskController {
     @ApiOperation({ summary: 'Eliminar una tarea por ID' })
     @ApiParam({ name: 'id', description: 'ID de la tarea (UUID)', })
     @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Tarea eliminada correctamente' })
-    async delete(@Param('id') id: string) {
+    async delete(@Param('id', ParseIntPipe) id: number) {
       return this.deleteTaskUseCase.execute(id);
     }
-
-
-
-
-
-
-
 
 
 }

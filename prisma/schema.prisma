@@ -13,7 +13,7 @@ datasource db {
 
 model Task {
  id            Int         @id @default(autoincrement())
-  tittle       String      @db.VarChar(100)
+  title       String      @db.VarChar(100)
   description  String      @db.VarChar(200)
   status       String      @default("PENDING")
   createdAt    DateTime    @default(now()) 
