@@ -9,63 +9,60 @@ import { Controller, Get, Post, Body, Inject, HttpStatus, Param, Patch, Delete, 
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CreateTaskDto } from "./dtos/create-task.dto";
 import { UpdateTaskDto } from "./dtos/update-taskdto";
-
-@ApiTags('Task')
-@Controller({path: "task", version: "1"})
+@ApiTags("tasks")
+@Controller({path: "tasks", version: "1"})
 export class TaskController {
 
-  constructor(
-    private readonly createTaskUseCase: CreateTaskUseCase,
-    private readonly getTaskByIdUseCase: GetTaskByIdUseCase,
-    private readonly updateTaskUseCase: UpdateTaskUseCase,
-    private readonly deleteTaskUseCase: DeleteTaskUseCase,
-    @Inject(ITaskRepositoryToken)
-    private readonly taskRepository: ITaskRepository
-    
-  ) {}
+    constructor(
+        private readonly createTaskUseCase: CreateTaskUseCase,
+        private readonly GetTaskByIdUseCase: GetTaskByIdUseCase,
+        private readonly updateTaskUseCase: UpdateTaskUseCase,
+        private readonly deleteTaskUseCase: DeleteTaskUseCase,
 
-  @Get()
-  @ApiOperation({ summary: 'Listar todas las tareas' })
-  async findAll() {
-    return this.taskRepository.findAll();
-  }
+        @Inject(ITaskRepositoryToken)
+        private readonly taskRepository: ITaskRepository
+        
+    ) {}
 
-  @Post()
-    @ApiOperation({ summary: 'Crear una nueva tarea' })
-    @ApiResponse({ status: 201, description: 'Creada correctamente' })
+    @Get()
+    @ApiOperation({ summary: "Listar  todas las tareas" })
+    async findAll() {
+        return this.taskRepository.findAll();
+    }
+
+    @Post()
+    @ApiOperation({ summary: "Crea una nueva tarea" })
+    @ApiResponse({ status: HttpStatus.CREATED, description: "Tarea creada exitosamente." })
     async create(@Body() task: CreateTaskDto) {
-        return this.createTaskUseCase.execute(task.title, task.description);
+        return this.createTaskUseCase.execute(task.title, task.description);        
+          
     }
 
-
-    @Get(':id')
-    @ApiOperation({ summary: 'Obtener una tarea por ID' })
-    @ApiParam({ name: 'id', description: 'ID de la tarea', type: String })
-    @ApiResponse({ status: HttpStatus.OK, description: 'Tarea encontrada' })
-    @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Tarea no encontrada' })
-    async findOne(@Param('id', ParseIntPipe) id: number) {
-        return this.getTaskByIdUseCase.execute(id);
+   @Get(":id")
+    @ApiOperation({ summary: "Obtiene una tarea por su ID" })
+    @ApiParam({ name: "id", description: "ID de la tarea (UUID)" })
+    @ApiResponse({ status: HttpStatus.OK, description: "La tarea ha sido encontrada exitosamente." })
+    @ApiResponse({ status: HttpStatus.NOT_FOUND, description: "No se encontró una tarea con el ID proporcionado." })    
+    async findOne(@Param("id", ParseIntPipe) id:number) {
+        return this.GetTaskByIdUseCase.execute(id);
     }
 
-
-    @Patch(':id')
-    @ApiOperation({ summary: 'Actualizar una tarea existente' })
-    @ApiParam({ name: 'id', description: 'ID de la tarea (UUID)', })
-   
+    @Patch(":id")
+    @ApiOperation({ summary: "Actualiza una tarea por ID" })
+    @ApiParam({ name: "id", description: "ID de la tarea a actualizar (UUID)" })
     async update(@Param('id', ParseIntPipe) id: number, @Body() updateTask: UpdateTaskDto) {
-      return this.updateTaskUseCase.execute(id, updateTask);
+        return this.updateTaskUseCase.execute(id, updateTask);
+        
     }
 
-    @Delete(':id')
+    @Delete(":id")
     @HttpCode(HttpStatus.NO_CONTENT)
-    @ApiOperation({ summary: 'Eliminar una tarea por ID' })
-    @ApiParam({ name: 'id', description: 'ID de la tarea (UUID)', })
-    @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Tarea eliminada correctamente' })
+    @ApiOperation({ summary: "Elimina una tarea por ID" })
+    @ApiParam({ name: "id", description: "ID de la tarea a eliminar (UUID)" })
+    @ApiResponse({ status: HttpStatus.NO_CONTENT, description: "Tarea eliminada " })
     async delete(@Param('id', ParseIntPipe) id: number) {
-      return this.deleteTaskUseCase.execute(id);
+        await this.deleteTaskUseCase.execute(id);
     }
 
-
+    
 }
-
-

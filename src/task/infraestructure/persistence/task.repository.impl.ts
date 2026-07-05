@@ -11,7 +11,7 @@ export class TaskRepositoryImpl implements ITaskRepository {
        return Promise.resolve(updateTask);
         // throw new Error('Method not implemented.');
     }
-    async delete(id: string): Promise<boolean> {
+    async delete(id: number): Promise<boolean> {
         const index = this.tasks.findIndex(t => t.id == id);
         if (index === -1) return Promise.resolve(false);
         this.tasks.splice(index, 1);
@@ -29,7 +29,7 @@ export class TaskRepositoryImpl implements ITaskRepository {
         return this.tasks;
          
     }
-    async findById(id: string): Promise<Task | null> {
+    async findById(id: number): Promise<Task | null> {
         return this.tasks.find(task => task.id === id) || null;
          
     }

@@ -1,7 +1,7 @@
 -- CreateTable
 CREATE TABLE "Task" (
     "id" SERIAL NOT NULL,
-    "tittle" VARCHAR(100) NOT NULL,
+    "title" VARCHAR(100) NOT NULL,
     "description" VARCHAR(200) NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'PENDING',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

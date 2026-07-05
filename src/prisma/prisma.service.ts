@@ -1,23 +1,30 @@
+import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "@prisma/client";
+import * as dotenv from 'dotenv';
 
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '@prisma/client';
-import { Pool } from 'pg';
+dotenv.config();
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
-  constructor() {
-    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-    const adapter = new PrismaPg(pool);
 
-    super({ adapter });
-  }
+    constructor() {
+        // npm i @prisma/adapter-pg pg 
+        // npm i dotenv --save-dev
+        const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 
-  async onModuleInit() {
-    await this.$connect();
-  }
+        super({ adapter});
+    }
 
-  async onModuleDestroy() {
-    await this.$disconnect();
-  }
+    async onModuleInit() {
+        await this.$connect();
+
+    }
+
+    async onModuleDestroy() {
+        await this.$disconnect();
+    }
+
 }
+
+//! git commit -m "add: Uso de Prisma ORM y configuracion de servicios y modulos"
