@@ -1,4 +1,3 @@
-
 import { CreateTaskUseCase } from "@/task/aplication/create-task.use-case";
 import { DeleteTaskUseCase } from "@/task/aplication/delete.task.use-case";
 import { GetTaskByIdUseCase } from "@/task/aplication/get-task-by-id.use-case";
@@ -9,6 +8,11 @@ import { Controller, Get, Post, Body, Inject, HttpStatus, Param, Patch, Delete, 
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CreateTaskDto } from "./dtos/create-task.dto";
 import { UpdateTaskDto } from "./dtos/update-taskdto";
+
+import { UseGuards } from '@nestjs/common';
+import { JwtGuard } from '../../../auth/jwt.guard';
+
+@UseGuards(JwtGuard)
 @ApiTags("tasks")
 @Controller({path: "tasks", version: "1"})
 export class TaskController {
@@ -25,7 +29,7 @@ export class TaskController {
     ) {}
 
     @Get()
-    @ApiOperation({ summary: "Listar  todas las tareas" })
+    @ApiOperation({ summary: "Listar todas las tareas" })
     async findAll() {
         return this.taskRepository.findAll();
     }
@@ -34,11 +38,11 @@ export class TaskController {
     @ApiOperation({ summary: "Crea una nueva tarea" })
     @ApiResponse({ status: HttpStatus.CREATED, description: "Tarea creada exitosamente." })
     async create(@Body() task: CreateTaskDto) {
-        return this.createTaskUseCase.execute(task.title, task.description);        
-          
+        // Corregido: Retornamos directo lo que genera el repositorio prisma para heredar el ID real
+        return this.taskRepository.create(task as any);        
     }
 
-   @Get(":id")
+    @Get(":id")
     @ApiOperation({ summary: "Obtiene una tarea por su ID" })
     @ApiParam({ name: "id", description: "ID de la tarea (UUID)" })
     @ApiResponse({ status: HttpStatus.OK, description: "La tarea ha sido encontrada exitosamente." })
@@ -52,7 +56,6 @@ export class TaskController {
     @ApiParam({ name: "id", description: "ID de la tarea a actualizar (UUID)" })
     async update(@Param('id', ParseIntPipe) id: number, @Body() updateTask: UpdateTaskDto) {
         return this.updateTaskUseCase.execute(id, updateTask);
-        
     }
 
     @Delete(":id")
@@ -63,6 +66,4 @@ export class TaskController {
     async delete(@Param('id', ParseIntPipe) id: number) {
         await this.deleteTaskUseCase.execute(id);
     }
-
-    
 }

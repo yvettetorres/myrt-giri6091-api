@@ -1,44 +1,43 @@
-
 import { PrismaService } from '@/prisma/prisma.module';
 import { Task } from '@/task/domain/task.entity';
-import {ITaskRepository} from "@/task/domain/task.repository.interface";
-import {Injectable} from "@nestjs/common";
-import { create } from 'domain';
+import { ITaskRepository } from "@/task/domain/task.repository.interface";
+import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class TaskRepositoryPrismaImpl implements ITaskRepository {
     
     constructor(private readonly prisma: PrismaService) { }
     
-    async create(task: Task): Promise<Task> {
-        const { id, ...data } = task;
+    async create(task: Task): Promise<any> { // 👈 Cambiamos temporalmente a Promise<any> para ver la respuesta cruda
         const createdTask = await this.prisma.task.create({
-            data: data
-        })as Task;
+            data: {
+                title: task.title,
+                description: task.description,
+                status: task.status,
+                createdAt: task.createdAt
+            }
+        });
 
-        return createdTask;
-        
-
+        return createdTask; // 👈 Retornamos directo lo que saca Prisma de la BD
     }
-    async findAll(): Promise<Task[]> {
-        const tasks = await this.prisma.task.findMany({
-            orderBy: {createdAt: 'desc'}
-        }) as Task[];
 
-        //! git commit -m "Migración del repositorio a prisma"
+    async findAll(): Promise<any[]> {
+        const tasks = await this.prisma.task.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
 
         return tasks;
-
     }
-    async findById(id: number): Promise<Task | null> {
+
+    async findById(id: number): Promise<any | null> {
         const task = await this.prisma.task.findUnique({
             where: { id }
-        }) as Task | null;
+        });
 
         return task;
     }
 
-    async update(task: Task): Promise<Task> {
+    async update(task: Task): Promise<any> {
         const updated = await this.prisma.task.update({
             where: { id: task.id },
             data: {
@@ -46,10 +45,11 @@ export class TaskRepositoryPrismaImpl implements ITaskRepository {
                 description: task.description,
                 status: task.status,
             }
-        }) as Task;
+        });
 
         return updated; 
     }
+
     async delete(id: number): Promise<boolean> {
         try {
             await this.prisma.task.delete({ where: { id } });

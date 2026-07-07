@@ -8,6 +8,7 @@ dotenv.config();
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
 
+
     constructor() {
         // npm i @prisma/adapter-pg pg 
         // npm i dotenv --save-dev
