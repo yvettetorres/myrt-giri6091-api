@@ -1,6 +1,8 @@
 services:
   postgres:
     image: postgres
+    volumes:
+      - ./mi-base-de-datos:/var/lib/postgresql/data
     container_name: postgres
     restart: always
     ports:

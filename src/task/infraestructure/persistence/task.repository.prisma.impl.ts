@@ -8,7 +8,7 @@ export class TaskRepositoryPrismaImpl implements ITaskRepository {
     
     constructor(private readonly prisma: PrismaService) { }
     
-    async create(task: Task): Promise<any> { // 👈 Cambiamos temporalmente a Promise<any> para ver la respuesta cruda
+    async create(task: Task): Promise<any> { // Cambiamos temporalmente a Promise<any> para ver la respuesta cruda
         const createdTask = await this.prisma.task.create({
             data: {
                 title: task.title,
@@ -18,7 +18,7 @@ export class TaskRepositoryPrismaImpl implements ITaskRepository {
             }
         });
 
-        return createdTask; // 👈 Retornamos directo lo que saca Prisma de la BD
+        return createdTask; // Retornamos directo lo que saca Prisma de la BD
     }
 
     async findAll(): Promise<any[]> {
@@ -37,18 +37,25 @@ export class TaskRepositoryPrismaImpl implements ITaskRepository {
         return task;
     }
 
-    async update(task: Task): Promise<any> {
+   async update(task: Task): Promise<any> {
+    console.log("Intentando actualizar tarea con ID:", task.id); // <--- ¡Mira la terminal del backend!
+    
+    try {
         const updated = await this.prisma.task.update({
-            where: { id: task.id },
+            where: { id: Number(task.id) }, // Forzamos a número
             data: {
                 title: task.title,
                 description: task.description,
                 status: task.status,
             }
         });
-
-        return updated; 
+        console.log("Tarea actualizada exitosamente:", updated);
+        return updated;
+    } catch (error) {
+        console.error("Error al actualizar en Prisma:", error); // <--- Aquí verás si el ID no existe
+        throw error;
     }
+}
 
     async delete(id: number): Promise<boolean> {
         try {

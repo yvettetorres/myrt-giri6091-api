@@ -1,15 +1,16 @@
-
 import { Module } from "@nestjs/common";
 import { TaskController } from "@/task/infraestructure/controllers/task.controller";
 import { CreateTaskUseCase } from "@/task/aplication/create-task.use-case";
 import { GetTaskByIdUseCase } from "@/task/aplication/get-task-by-id.use-case";
-import { ITaskRepositoryToken } from "@/task/domain/task.repository.interface";
-import { TaskRepositoryImpl } from "@/task/infraestructure/persistence/task.repository.impl";
 import { UpdateTaskUseCase } from "@/task/aplication/update-task.use.case";
 import { DeleteTaskUseCase } from "@/task/aplication/delete.task.use-case";
+import { ITaskRepositoryToken } from "@/task/domain/task.repository.interface";
+import { TaskRepositoryPrismaImpl } from "@/task/infraestructure/persistence/task.repository.prisma.impl";
+import { PrismaModule } from "@/prisma/prisma.module";
 
 @Module({
-    controllers: [ TaskController ],
+    imports: [PrismaModule],
+    controllers: [TaskController],
     providers: [
         CreateTaskUseCase,
         GetTaskByIdUseCase,
@@ -17,9 +18,9 @@ import { DeleteTaskUseCase } from "@/task/aplication/delete.task.use-case";
         DeleteTaskUseCase,
         {
             provide: ITaskRepositoryToken,
-            useClass: TaskRepositoryImpl  // Cambiar si la DB cambia
-        },
+            useClass: TaskRepositoryPrismaImpl
+        }
     ],
-    exports: [ CreateTaskUseCase ]
+    exports: [CreateTaskUseCase]
 })
 export class TasksModule {}
